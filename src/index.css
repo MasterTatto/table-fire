@@ -349,6 +349,6 @@ template {
     display: none;
 }
 
-/*.ag-watermark {*/
-/*  display: none !important;*/
-/*}*/
+.ag-watermark {
+  display: none !important;
+}
