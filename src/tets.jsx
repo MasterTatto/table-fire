@@ -61,6 +61,7 @@ export const GridExample = () => {
             field: "type_btn",
             headerName: 'Контракт',
             cellRenderer: (params) => {
+
                 // Данные с бека всей строки
                 const data = params?.data
 
@@ -131,6 +132,7 @@ export const GridExample = () => {
                         minWidth: 150,
                         field: "",
                         headerName: 'Просмотр',
+
                         cellRenderer: (params) => {
                             return <span className={classNames('cell_text', 'cell_text_btn')}>Смотреть</span>
                         }
@@ -140,6 +142,7 @@ export const GridExample = () => {
                     flex: 1,
                     suppressMenu: true,
                 },
+
             },
             getDetailRowData: function (params) {
                 params.successCallback(params.data?.mtt_prev_contracts);

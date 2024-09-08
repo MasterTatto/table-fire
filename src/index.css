@@ -82,3 +82,19 @@ html {
 .ag-watermark {
     display: none !important;
 }
+
+.no-header .ag-header {
+    display: none !important;
+}
+
+.ag-layout-normal .ag-pivot-off {
+    display: none !important;
+}
+
+.ag-details-row-fixed-height {
+    padding: 10px !important;
+}
+
+.ag-details-row-fixed-height .ag-root-wrapper {
+    border-radius: 16px !important;
+}
