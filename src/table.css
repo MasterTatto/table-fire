@@ -1276,7 +1276,7 @@
 }
 
 .ag-root-wrapper {
-    border: none !important;
+    /*border: none !important;*/
     border-radius: 16px 16px 0 0;
     background-color: #323D4E;
 }
@@ -1288,4 +1288,12 @@
 
 .ag-group-contracted .ag-icon, .ag-group-expanded .ag-icon {
     color: #fff !important;
+}
+
+.ag-details-row {
+    background-color: rgba(27, 36, 49, 0.5) !important;
+}
+
+.ag-header-cell-resize::after {
+    background-color: #B5B6C4 !important;
 }

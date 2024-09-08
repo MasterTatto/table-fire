@@ -12,6 +12,9 @@ import {ColumnsToolPanelModule} from "@ag-grid-enterprise/column-tool-panel";
 import {MasterDetailModule} from "@ag-grid-enterprise/master-detail";
 import {MenuModule} from "@ag-grid-enterprise/menu";
 import classNames from "classnames";
+import {mock} from "./mock";
+import moment from "moment";
+import ModalTable from "./modal";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -21,38 +24,48 @@ ModuleRegistry.registerModules([
 ]);
 
 export const GridExample = () => {
-    const [rowData, setRowData] = useState();
+    const [modalData, setModalData] = useState(null)
+
     const isRowMaster = useCallback((dataItem) => {
-        return dataItem ? dataItem.callRecords.length > 0 : false;
+        return dataItem ? dataItem?.mtt_prev_contracts?.length > 0 : false;
     }, []);
+
     const [columnDefs, setColumnDefs] = useState([
         {
-            field: "name",
+            field: "nickname",
             cellRenderer: "agGroupCellRenderer",
             headerName: 'Никнейм',
             cellClass: 'cell_text',
         },
         {
-            field: "account",
+            field: "date_join_mtt",
             headerName: 'Дата прихода в команду',
-            cellClass: 'cell_text',
+            cellRenderer: (params) => {
+                return <span className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY')}</span>
+            }
         },
         {
-            field: "calls",
+            field: "mtt_current_contract.type",
             headerName: 'Тип контракта',
             cellClass: 'cell_text',
         },
         {
-            field: "minutes",
-            valueFormatter: "x.toLocaleString() + 'm'",
+            field: "mtt_current_contract.date_current_contract",
             headerName: 'Срок текущего контракта',
-            cellClass: 'cell_text',
+            cellRenderer: (params) => {
+                return <span
+                    className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY HH:mm')}</span>
+            }
         },
         {
-            field: "",
+            field: "type_btn",
             headerName: 'Контракт',
             cellRenderer: (params) => {
-                return <span className={classNames('cell_text', 'cell_text_btn')}>Добавить</span>
+                // Данные с бека всей строки
+                const data = params?.data
+
+                return <span onClick={() => setModalData(data)}
+                             className={classNames('cell_text', 'cell_text_btn')}>{params?.value}</span>
             }
         },
         {
@@ -63,40 +76,75 @@ export const GridExample = () => {
             }
         },
     ]);
+
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
             suppressMenu: true,
         };
     }, []);
+
     const detailCellRendererParams = useMemo(() => {
         return {
             detailGridOptions: {
                 columnDefs: [
-                    {field: "callId"},
-                    {field: "direction"},
-                    {field: "number", minWidth: 150},
-                    {field: "duration", valueFormatter: "x.toLocaleString() + 's'"},
-                    {field: "switchCode", minWidth: 150},
+                    {
+                        minWidth: 150,
+                        field: "status",
+                        headerName: 'Статус',
+                        cellClass: 'cell_text',
+                    },
+                    {
+                        minWidth: 150,
+                        field: "date_join_mtt",
+                        headerName: 'Дата прихода в команду',
+                        cellRenderer: (params) => {
+                            return <span
+                                className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY')}</span>
+                        }
+                    },
+                    {
+                        minWidth: 150,
+                        field: "type",
+                        headerName: 'Тип контракта',
+                        cellClass: 'cell_text',
+                    },
+                    {
+                        minWidth: 150,
+                        field: "date_current_contract",
+                        headerName: 'Срок текущего контракта',
+                        cellRenderer: (params) => {
+                            return <span
+                                className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY HH:mm')}</span>
+                        }
+                    },
+                    {
+                        minWidth: 150,
+                        field: "comment",
+                        headerName: 'Коментарий',
+                        cellClass: 'cell_text',
+                        wrapText: true,
+                        autoHeight: true,
+                        cellStyle: {whiteSpace: 'normal', wordWrap: 'break-word'}
+                    },
+                    {
+                        minWidth: 150,
+                        field: "",
+                        headerName: 'Просмотр',
+                        cellRenderer: (params) => {
+                            return <span className={classNames('cell_text', 'cell_text_btn')}>Смотреть</span>
+                        }
+                    },
                 ],
                 defaultColDef: {
                     flex: 1,
+                    suppressMenu: true,
                 },
             },
             getDetailRowData: function (params) {
-                params.successCallback(params.data.callRecords);
+                params.successCallback(params.data?.mtt_prev_contracts);
             },
         };
-    }, []);
-
-    const onGridReady = useCallback((params) => {
-        fetch(
-            "https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json",
-        )
-            .then((resp) => resp.json())
-            .then((data) => {
-                setRowData(data);
-            });
     }, []);
 
     return (
@@ -106,15 +154,16 @@ export const GridExample = () => {
                 "ag-theme-quartz"
             }
         >
+            {Boolean(modalData) && <ModalTable open={modalData} handleClose={() => setModalData(null)}/>}
             <AgGridReact
-                rowData={rowData}
+                rowData={mock}
                 masterDetail={true}
                 isRowMaster={isRowMaster}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
+                suppressDragLeaveHidesColumns={true}
+                domLayout='autoHeight'
                 detailCellRendererParams={detailCellRendererParams}
-                onGridReady={onGridReady}
-                // onFirstDataRendered={onFirstDataRendered}
             />
         </div>
     );
