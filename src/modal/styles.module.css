@@ -1,0 +1,138 @@
+.back_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    cursor: pointer;
+    padding: 16px 32px;
+    gap: 14px;
+    font-family: Nunito Sans, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24.55px;
+    letter-spacing: -0.06428569555282593px;
+    color: #FFFFFF;
+    border: 1px solid #4678EA;
+    border-radius: 16px;
+}
+
+.title_box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 19px 0 42px 0;
+}
+
+.title {
+    font-family: Nunito Sans, sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 43.65px;
+    text-align: left;
+    color: #FFFFFF
+}
+
+.btn_close {
+    background-color: #FF0000BF;
+}
+
+.btn_close:hover {
+    background-color: rgba(255, 0, 0, 0.6);
+}
+
+.content {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 100%;
+}
+
+.content_item {
+    padding: 0 70px;
+    border-right: 1px solid #B5B6C480;
+}
+
+.content_item_last {
+    border-right: none;
+}
+
+.content_item_title {
+    font-family: Nunito Sans, sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32.74px;
+    text-align: left;
+    color: #FFFFFF;
+    min-height: 32px;
+}
+
+.content_item_box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.text_area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.text_area textarea::placeholder {
+    font-family: Nunito Sans, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 27.28px;
+    text-align: left;
+    color: #FFFFFF;
+}
+
+.text_area textarea {
+    height: 236px;
+    padding: 12px;
+    background-color: rgba(255, 255, 255, 0);
+    outline: none;
+    border: 1px solid #CFCFCF33;
+    border-radius: 8px;
+    font-family: Nunito Sans, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 27.28px;
+    text-align: left;
+    color: #FFFFFF;
+    resize: none;
+}
+
+.text_area_title {
+    font-family: Nunito Sans, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24.55px;
+    text-align: left;
+    color: #B5B6C4
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 18px;
+}
+
+.btn_exit_no_save {
+    border: 1px solid #4678EA;
+}
+
+.btn_exit_save {
+    background-color: #4678EA;
+    border: 1px solid #4678EA;
+}
+
+.btn_exit_save:hover {
+    background-color: rgba(70, 120, 234, 0.85);
+    border: 1px solid rgba(70, 120, 234, 0.85);
+}

@@ -115,7 +115,7 @@ export const mock = [
                 date_join_mtt: "2023-10-14T19:02:33",
                 type: "Тренировки",
                 date_current_contract: "2025-02-18T18:45:10",
-                comment: "Big represent language state ready simply common air.",
+                comment: "Big represent language state ready simply ui-kit air.",
             },
             {
                 status: "Контракт закрыт",

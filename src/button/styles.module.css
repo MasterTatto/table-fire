@@ -1,0 +1,16 @@
+.btn {
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-family: Nunito Sans, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24.55px;
+    letter-spacing: -0.06428569555282593px;
+    text-align: center;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .4s all;
+    cursor: pointer;
+}
