@@ -67,7 +67,7 @@ const SwitchModal = ({value, onChange, title = '',}) => {
         <div className={s.input}>
             {title && <p className={s.title}>{title}</p>}
             <div className={s.swicth}>
-                <IOSSwitch defaultChecked/>
+                <IOSSwitch defaultChecked={value} checked={value} onChange={(e) => onChange(e)}/>
             </div>
         </div>
     );

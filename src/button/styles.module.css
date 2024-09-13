@@ -13,4 +13,7 @@
     justify-content: center;
     transition: .4s all;
     cursor: pointer;
+    outline: none;
+    border: none;
+    background-color: inherit;
 }

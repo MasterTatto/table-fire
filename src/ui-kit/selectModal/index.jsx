@@ -38,11 +38,12 @@ const customStyles = {
         },
     }),
 };
-const SelectModal = ({value, onChange, title = '', options = []}) => {
+const SelectModal = ({error,value, onChange, title = '', options = []}) => {
     return (
         <div className={s.input}>
             {title && <p className={s.title}>{title}</p>}
             <Select placeholder={''} styles={customStyles} value={value} onChange={onChange} options={options}/>
+            {error && <span className={s.error}>{error}</span>}
         </div>
     );
 };
