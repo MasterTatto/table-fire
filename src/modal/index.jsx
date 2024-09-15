@@ -104,6 +104,7 @@ const ModalTable = ({open, handleClose}) => {
         },
         onSubmit: (values) => {
             setOpenInfoModal(1)
+
         }
     })
 

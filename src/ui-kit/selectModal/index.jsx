@@ -7,8 +7,8 @@ const customStyles = {
         ...provided,
         height: '50px',
         padding: '0 4px',
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        border: '1px solid #CFCFCF33',
+        backgroundColor: '#1B2431',
+        border: '1px solid #323D4E',
         borderRadius: '8px',
         boxShadow: 'none', // Убираем тень при фокусе
         '&:hover': {
@@ -31,14 +31,14 @@ const customStyles = {
         fontWeight: '600',
         lineHeight: '27.28px',
         textAlign: 'left',
-        color: state.isSelected ? '#fff' : '#6110f1',
-        backgroundColor: state.isSelected ? '#6110f1' : '#fff',
+        color: state.isSelected ? '#fff' : '#fff',
+        backgroundColor: state.isSelected ? '#3A4962' : '#1B2431',
         '&:hover': {
-            backgroundColor: 'lightblue', // Цвет при наведении на опцию
+            backgroundColor: 'rgba(58,73,98,0.85)', // Цвет при наведении на опцию
         },
     }),
 };
-const SelectModal = ({error,value, onChange, title = '', options = []}) => {
+const SelectModal = ({error, value, onChange, title = '', options = []}) => {
     return (
         <div className={s.input}>
             {title && <p className={s.title}>{title}</p>}
