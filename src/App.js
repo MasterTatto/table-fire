@@ -12,7 +12,6 @@ const App = () => {
                 <Input placeholder={'ПОИСК по никнеймам?'}/>
                 <Input placeholder={'Фильтр по датам, типам контрактов?'}/>
             </div>
-
             <h2 className={'title'}>Страница контрактов</h2>
             <GridExample/>
         </div>
