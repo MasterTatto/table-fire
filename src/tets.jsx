@@ -12,9 +12,10 @@ import {ColumnsToolPanelModule} from "@ag-grid-enterprise/column-tool-panel";
 import {MasterDetailModule} from "@ag-grid-enterprise/master-detail";
 import {MenuModule} from "@ag-grid-enterprise/menu";
 import classNames from "classnames";
-import {mock} from "./mock";
+import {mock, mock_data} from "./mock";
 import moment from "moment";
 import ModalTable from "./modal";
+import {useGetTableDataQuery} from "./redux/table.service";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -24,11 +25,17 @@ ModuleRegistry.registerModules([
 ]);
 
 export const GridExample = () => {
+    const {data, isLoading} = useGetTableDataQuery('', {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+    })
+    console.log(data)
     const [modalData, setModalData] = useState(null)
 
     const isRowMaster = useCallback((dataItem) => {
         return dataItem ? dataItem?.mtt_prev_contracts?.length > 0 : false;
     }, []);
+
 
     const [columnDefs, setColumnDefs] = useState([
         {
@@ -41,20 +48,24 @@ export const GridExample = () => {
             field: "date_join_mtt",
             headerName: 'Дата прихода в команду',
             cellRenderer: (params) => {
-                return <span className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY')}</span>
+                return <span
+                    className={classNames('cell_text')}>{params?.value ? moment(params?.value)?.format('DD.MM.YYYY') : '---'}</span>
             }
         },
         {
             field: "mtt_current_contract.type",
             headerName: 'Тип контракта',
             cellClass: 'cell_text',
+            cellRenderer: (params) => {
+                return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
+            }
         },
         {
             field: "mtt_current_contract.date_current_contract",
             headerName: 'Срок текущего контракта',
             cellRenderer: (params) => {
                 return <span
-                    className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY HH:mm')}</span>
+                    className={classNames('cell_text')}>{params?.value ? moment(params?.value)?.format('DD.MM.YYYY') : '---'}</span>
             }
         },
         {
@@ -66,7 +77,7 @@ export const GridExample = () => {
                 const data = params?.data
 
                 return <span onClick={() => setModalData(data)}
-                             className={classNames('cell_text', 'cell_text_btn')}>{params?.value}</span>
+                             className={classNames('cell_text', 'cell_text_btn')}>{params?.value || '---'}</span>
             }
         },
         {
@@ -159,7 +170,7 @@ export const GridExample = () => {
         >
             {Boolean(modalData) && <ModalTable open={modalData} handleClose={() => setModalData(null)}/>}
             <AgGridReact
-                rowData={mock}
+                rowData={mock_data?.players || []}
                 masterDetail={true}
                 isRowMaster={isRowMaster}
                 columnDefs={columnDefs}
