@@ -83,13 +83,13 @@ html {
     display: none !important;
 }
 
-.no-header .ag-header {
-    display: none !important;
-}
+/*.no-header .ag-header {*/
+/*    display: none !important;*/
+/*}*/
 
-.ag-layout-normal .ag-pivot-off {
-    display: none !important;
-}
+/*.ag-layout-normal .ag-pivot-off {*/
+/*    display: none !important;*/
+/*}*/
 
 .ag-details-row-fixed-height {
     padding: 10px !important;

@@ -49,11 +49,11 @@ export const GridExample = () => {
             headerName: 'Дата прихода в команду',
             cellRenderer: (params) => {
                 return <span
-                    className={classNames('cell_text')}>{params?.value ? moment(params?.value)?.format('DD.MM.YYYY') : '---'}</span>
+                    className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
             }
         },
         {
-            field: "mtt_current_contract.type",
+            field: "mtt_current_contract.contract_duration_type_name",
             headerName: 'Тип контракта',
             cellClass: 'cell_text',
             cellRenderer: (params) => {
@@ -61,23 +61,42 @@ export const GridExample = () => {
             }
         },
         {
-            field: "mtt_current_contract.date_current_contract",
+            field: "mtt_current_contract.contract_duration_type",
             headerName: 'Срок текущего контракта',
             cellRenderer: (params) => {
+                console.log(params)
                 return <span
-                    className={classNames('cell_text')}>{params?.value ? moment(params?.value)?.format('DD.MM.YYYY') : '---'}</span>
+                    className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.mtt_current_contract?.tourney_end_contract : (params?.data?.mtt_current_contract?.date_end_contract ? moment(params?.data?.mtt_current_contract?.date_end_contract)?.format('DD.MM.YYYY') : '---')}</span>
             }
         },
         {
             field: "type_btn",
             headerName: 'Контракт',
             cellRenderer: (params) => {
+                const typeBtn = {
+                    1: {
+                        title: 'Добавить',
+                        id: 1
+                    },
+                    2: {
+                        title: 'Редактировать',
+                        id: 2
+                    },
+                    3: {
+                        title: 'Продлить',
+                        id: 3
+                    },
+                }
 
+                const typeValueButton =
+                    (((!params?.data?.mtt_prev_contracts || params?.data?.mtt_prev_contracts?.length === 0) && !params?.data?.mtt_current_contract) && 1) ||
+                    ((params?.data?.mtt_current_contract) && 2) ||
+                    (((params?.data?.mtt_prev_contracts && params?.data?.mtt_prev_contracts?.length !== 0) && !params?.data?.mtt_current_contract) && 3)
                 // Данные с бека всей строки
                 const data = params?.data
 
                 return <span onClick={() => setModalData(data)}
-                             className={classNames('cell_text', 'cell_text_btn')}>{params?.value || '---'}</span>
+                             className={classNames('cell_text', 'cell_text_btn')}>{typeBtn[typeValueButton]?.title || '---'}</span>
             }
         },
         {
@@ -102,37 +121,41 @@ export const GridExample = () => {
                 columnDefs: [
                     {
                         minWidth: 150,
-                        field: "status",
+                        field: "",
                         headerName: 'Статус',
                         cellClass: 'cell_text',
-                    },
-                    {
-                        minWidth: 150,
-                        field: "date_join_mtt",
-                        headerName: 'Дата прихода в команду',
                         cellRenderer: (params) => {
                             return <span
-                                className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY')}</span>
+                                className={classNames('cell_text')}>Контракт закрыт</span>
                         }
                     },
                     {
                         minWidth: 150,
-                        field: "type",
+                        field: "close_date",
+                        headerName: 'Дата закрытия контракта',
+                        cellRenderer: (params) => {
+                            return <span
+                                className={classNames('cell_text')}>{params?.value ? moment(params?.value)?.format('DD.MM.YYYY HH:mm') : '---'}</span>
+                        }
+                    },
+                    {
+                        minWidth: 150,
+                        field: "contract_duration_type_name",
                         headerName: 'Тип контракта',
                         cellClass: 'cell_text',
                     },
                     {
                         minWidth: 150,
-                        field: "date_current_contract",
+                        field: "contract_duration_type",
                         headerName: 'Срок текущего контракта',
                         cellRenderer: (params) => {
                             return <span
-                                className={classNames('cell_text')}>{moment(params?.value)?.format('DD.MM.YYYY HH:mm')}</span>
+                                className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.tourney_end_contract : (params?.data?.date_end_contract ? moment(params?.data?.date_end_contract)?.format('DD.MM.YYYY HH:mm') : '---')}</span>
                         }
                     },
                     {
                         minWidth: 150,
-                        field: "comment",
+                        field: "close_description",
                         headerName: 'Коментарий',
                         cellClass: 'cell_text',
                         wrapText: true,
@@ -170,7 +193,7 @@ export const GridExample = () => {
         >
             {Boolean(modalData) && <ModalTable open={modalData} handleClose={() => setModalData(null)}/>}
             <AgGridReact
-                rowData={mock_data?.players || []}
+                rowData={data?.players || []}
                 masterDetail={true}
                 isRowMaster={isRowMaster}
                 columnDefs={columnDefs}
