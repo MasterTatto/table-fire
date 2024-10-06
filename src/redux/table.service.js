@@ -12,9 +12,17 @@ export const tableApi = createApi({
                 method: 'GET',
             }),
         }),
+        createContract: build.mutation({
+            query: (payload) => ({
+                url: `contracts/create`,
+                method: 'POST',
+                body:payload
+            }),
+        }),
     })
 })
 
 export const {
     useGetTableDataQuery,
+    useCreateContractMutation,
 } = tableApi

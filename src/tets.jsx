@@ -25,7 +25,7 @@ ModuleRegistry.registerModules([
 ]);
 
 export const GridExample = () => {
-    const {data, isLoading} = useGetTableDataQuery('', {
+    const {data, isLoading, refetch} = useGetTableDataQuery('', {
         refetchOnReconnect: true,
         refetchOnMountOrArgChange: true,
     })
@@ -66,7 +66,7 @@ export const GridExample = () => {
             cellRenderer: (params) => {
                 console.log(params)
                 return <span
-                    className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.mtt_current_contract?.tourney_end_contract : (params?.data?.mtt_current_contract?.date_end_contract ? moment(params?.data?.mtt_current_contract?.date_end_contract)?.format('DD.MM.YYYY') : '---')}</span>
+                    className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.mtt_current_contract?.end_contract_tourney : (params?.data?.mtt_current_contract?.end_contract_date ? moment(params?.data?.mtt_current_contract?.end_contract_date)?.format('DD.MM.YYYY') : '---')}</span>
             }
         },
         {
@@ -76,18 +76,18 @@ export const GridExample = () => {
                 const typeBtn = {
                     1: {
                         title: 'Добавить',
-                        id: 1
+                        id: 1 // added
                     },
                     2: {
                         title: 'Редактировать',
-                        id: 2
+                        id: 2 // edit
                     },
                     3: {
                         title: 'Продлить',
-                        id: 3
+                        id: 3 // contiune
                     },
                 }
-
+                // react-toastify@9.1.3
                 const typeValueButton =
                     (((!params?.data?.mtt_prev_contracts || params?.data?.mtt_prev_contracts?.length === 0) && !params?.data?.mtt_current_contract) && 1) ||
                     ((params?.data?.mtt_current_contract) && 2) ||
@@ -95,7 +95,7 @@ export const GridExample = () => {
                 // Данные с бека всей строки
                 const data = params?.data
 
-                return <span onClick={() => setModalData(data)}
+                return <span onClick={() => setModalData({...data, btn_type: typeBtn[typeValueButton]})}
                              className={classNames('cell_text', 'cell_text_btn')}>{typeBtn[typeValueButton]?.title || '---'}</span>
             }
         },
@@ -150,7 +150,7 @@ export const GridExample = () => {
                         headerName: 'Срок текущего контракта',
                         cellRenderer: (params) => {
                             return <span
-                                className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.tourney_end_contract : (params?.data?.date_end_contract ? moment(params?.data?.date_end_contract)?.format('DD.MM.YYYY HH:mm') : '---')}</span>
+                                className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.end_contract_tourney : (params?.data?.end_contract_date ? moment(params?.data?.end_contract_date)?.format('DD.MM.YYYY HH:mm') : '---')}</span>
                         }
                     },
                     {
@@ -191,7 +191,9 @@ export const GridExample = () => {
                 "ag-theme-quartz"
             }
         >
-            {Boolean(modalData) && <ModalTable open={modalData} handleClose={() => setModalData(null)}/>}
+            {Boolean(modalData) &&
+                <ModalTable refetch_table={refetch} contract_types={data?.contract_types || []} open={modalData}
+                            handleClose={() => setModalData(null)}/>}
             <AgGridReact
                 rowData={data?.players || []}
                 masterDetail={true}
