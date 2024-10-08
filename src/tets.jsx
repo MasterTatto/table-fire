@@ -53,7 +53,7 @@ export const GridExample = () => {
             }
         },
         {
-            field: "mtt_current_contract.contract_duration_type_name",
+            field: "mtt_current_contract.contract_duration_name",
             headerName: 'Тип контракта',
             cellClass: 'cell_text',
             cellRenderer: (params) => {
@@ -140,7 +140,7 @@ export const GridExample = () => {
                     },
                     {
                         minWidth: 150,
-                        field: "contract_duration_type_name",
+                        field: "contract_duration_name",
                         headerName: 'Тип контракта',
                         cellClass: 'cell_text',
                     },
