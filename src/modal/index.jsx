@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './styles.module.css'
 import {Box, Button, Fade, Modal} from "@mui/material";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -9,8 +9,9 @@ import SwitchModal from "../ui-kit/switchModal";
 import SelectModal from "../ui-kit/selectModal";
 import ModalInfo from "../modal_info";
 import {useFormik} from "formik";
-import {useCreateContractMutation} from "../redux/table.service";
+import {useCreateContractMutation, useEditContractMutation} from "../redux/table.service";
 import {toast} from "react-toastify";
+import moment from "moment";
 
 const style = {
     position: 'absolute',
@@ -36,10 +37,13 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
     // 2 = edit
     // 3 = contiune
     console.log(open)
+    console.log(contract_types)
     const [openInfoModal, setOpenInfoModal] = useState(null)
 
     const [createContract] = useCreateContractMutation()
+    const [editContract] = useEditContractMutation()
 
+    const isEdit = btn_type?.id === 2
     const formik = useFormik({
         initialValues: {
             date_sign_contract: null,
@@ -60,23 +64,6 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
             has_splits_penalty: false,
             day_set_close: null,
             notes: null,
-
-            // date_contract: null,
-            // type_contract: null,
-            // duration_contract: null,
-            // min_dist: null,
-            // fix: null,
-            // rb_player: null,
-            // countine: false,
-            // test_dist: null,
-            // date_game_off: null,
-            // root_indiva: null,
-            // root_denay: null,
-            // split: true,
-            // root_split: null,
-            // countine_split: false,
-            // day_close: null,
-            // note: null,
         },
         validate: (values) => {
             const errors = {}
@@ -158,24 +145,74 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                     notes: values?.notes,
                 }
             }
-            createContract(prepeared_contract_data)
-                .unwrap()
-                .then((res) => {
-                    console.log(res)
-                    if (res?.error) {
-                        toast.error(res?.message || 'Ошибка создания')
-                    } else {
-                        toast.success('Контаркт создан!')
-                        handleClose()
-                        refetch_table()
-                    }
-                })
-                .catch((e) => {
-                    toast.error('Ошибка создания')
-                })
-            // setOpenInfoModal(1)
+            if (isEdit) {
+                editContract(prepeared_contract_data)
+                    .unwrap()
+                    .then((res) => {
+                        console.log(res)
+                        if (res?.error) {
+                            toast.error(res?.message || 'Ошибка редактирования')
+                        } else {
+                            toast.success('Редактирование сохранено!')
+                            handleClose()
+                            refetch_table()
+                        }
+                    })
+                    .catch((e) => {
+                        toast.error('Ошибка редактирования')
+                    })
+            } else {
+                createContract(prepeared_contract_data)
+                    .unwrap()
+                    .then((res) => {
+                        console.log(res)
+                        if (res?.error) {
+                            toast.error(res?.message || 'Ошибка создания')
+                        } else {
+                            toast.success('Контаркт создан!')
+                            handleClose()
+                            refetch_table()
+                        }
+                    })
+                    .catch((e) => {
+                        toast.error('Ошибка создания')
+                    })
+            }
         }
     })
+
+    useEffect(() => {
+        if (isEdit) {
+            const contract_type = contract_types?.find((f) => f?.name === open?.mtt_current_contract?.contract_duration_name)
+            const training_quota_type = [
+                {value: 'day', label: 'Количество дней'},
+                {value: 'tourney', label: 'Количество турниров'}
+            ]?.find((f) => f?.value === open?.mtt_current_contract?.training_quota_type)
+
+            formik.setFieldValue('date_sign_contract', moment(open?.mtt_current_contract?.date_sign_contract)?.format('YYYY-MM-DD'))
+            formik.setFieldValue('contract_type', {
+                ...contract_type,
+                label: contract_type?.name,
+                value: contract_type._id
+            })
+            formik.setFieldValue('duration_contract', open?.mtt_current_contract?.contract_duration_type === 'number' ? open?.mtt_current_contract?.end_contract_tourney : moment(open?.mtt_current_contract?.end_contract_date)?.format('YYYY-MM-DD'))
+            formik.setFieldValue('min_distance', open?.mtt_current_contract?.min_distance)
+            formik.setFieldValue('fix_share', open?.mtt_current_contract?.fix_share)
+            formik.setFieldValue('player_rb', open?.mtt_current_contract?.player_rb)
+            formik.setFieldValue('has_min_distance_penalty', open?.mtt_current_contract?.has_min_distance_penalty)
+            formik.setFieldValue('test_distance', open?.mtt_current_contract?.test_distance)
+            formik.setFieldValue('date_start_contract', moment(open?.mtt_current_contract?.date_start_contract)?.format('YYYY-MM-DD'))
+            formik.setFieldValue('training_quota_type', training_quota_type)
+            formik.setFieldValue('training_quota', open?.mtt_current_contract?.training_quota_day || open?.mtt_current_contract?.training_quota_tourney)
+            formik.setFieldValue('day_remove_training_quota', open?.mtt_current_contract?.day_remove_training_quota)
+            formik.setFieldValue('additional_share_terms', open?.mtt_current_contract?.additional_share_terms)
+            formik.setFieldValue('has_splits', open?.mtt_current_contract?.has_splits)
+            formik.setFieldValue('split_terms', open?.mtt_current_contract?.split_terms)
+            formik.setFieldValue('has_splits_penalty', open?.mtt_current_contract?.has_splits_penalty)
+            formik.setFieldValue('day_set_close', open?.mtt_current_contract?.day_set_close)
+            formik.setFieldValue('notes', open?.mtt_current_contract?.notes)
+        }
+    }, [isEdit])
 
     console.log(formik?.values)
     return (
@@ -195,7 +232,14 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                 <Fade in={Boolean(open)} timeout={300}>
                     <Box sx={style}>
                         {openInfoModal !== null &&
-                            <ModalInfo type={openInfoModal} open={openInfoModal}
+                            <ModalInfo type={openInfoModal}
+                                       refetch_table={refetch_table}
+                                       data={open}
+                                       open={openInfoModal}
+                                       handleCloseAll={() => {
+                                           setOpenInfoModal(null)
+                                           handleClose()
+                                       }}
                                        handleClose={() => setOpenInfoModal(null)}/>}
                         <div className={s.back_box} onClick={handleClose}>
                             <KeyboardBackspaceIcon sx={{color: '#fff'}}/>
@@ -203,8 +247,8 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                         </div>
                         <div className={s.title_box}>
                             <h1 className={s.title}>{`${(btn_type?.id === 1 && 'Меню добавления контракта') || (btn_type?.id === 2 && 'Меню редактирования контракта') || (btn_type?.id === 3 && 'Меню продления контракта')}. Игрок - ${open?.nickname || '---'}`} </h1>
-                            <ButtonModal className={s.btn_close} onClick={() => setOpenInfoModal(3)}>Закрыть
-                                контракт</ButtonModal>
+                            {isEdit && <ButtonModal className={s.btn_close} onClick={() => setOpenInfoModal(3)}>Закрыть
+                                контракт</ButtonModal>}
                         </div>
 
                         <form onSubmit={formik.handleSubmit} className={s.content}>
@@ -214,7 +258,10 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
 
                                     <InputModal value={formik?.values?.date_sign_contract}
                                                 onBlur={formik.handleBlur}
-                                                onChange={formik.handleChange}
+                                                onChange={(e) => {
+                                                    console.log(e)
+                                                    formik.handleChange(e)
+                                                }}
                                                 error={formik?.touched?.date_sign_contract && formik?.errors?.date_sign_contract}
                                                 name={'date_sign_contract'} type={'date'}
                                                 title={'Дата подписания контракта'}/>

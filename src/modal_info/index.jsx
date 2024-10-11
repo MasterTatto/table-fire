@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import s from './styles.module.css'
 import {Box, Modal} from "@mui/material";
 import ButtonModal from "../button";
+import {useCloseContractMutation} from "../redux/table.service";
+import {toast} from "react-toastify";
 
 const style = {
     position: 'absolute',
@@ -20,7 +22,36 @@ const style = {
     padding: '46px 72px',
 };
 
-const ModalInfo = ({open, handleClose, type}) => {
+const ModalInfo = ({open, handleClose, type, handleCloseAll, data, refetch_table}) => {
+    const [closeContract] = useCloseContractMutation()
+    const [value, setValue] = useState('')
+    console.log(data)
+    const handleCloseContract = () => {
+        if (!value) {
+            toast.error('Комментарий не может быть пустым')
+        } else {
+            const id_user = data?.player_id
+
+            closeContract({
+                player_id: id_user,
+                description: value
+            }).unwrap()
+                .then((res) => {
+                    if (res?.error) {
+                        toast.error(res?.message || 'Ошибка закрытия контракта')
+                    } else {
+                        refetch_table()
+                        handleCloseAll()
+                    }
+                    console.log(res)
+
+                })
+                .catch((e) => {
+                    console.log(e)
+                    toast.error('Ошибка закрытия контракта')
+                })
+        }
+    }
     return (
         <Modal
             open={Boolean(open)}
@@ -42,13 +73,19 @@ const ModalInfo = ({open, handleClose, type}) => {
                     {type === 2 && 'Изменения не будут сохранены!'}
                     {type === 3 && <div className={s.text_area}>
                         <p className={s.text_area_title}>Комментарий</p>
-                        <textarea/>
+                        <textarea value={value} onChange={(e) => setValue(e?.target?.value)}/>
                     </div>}
                 </p>
 
                 <div className={s.btns}>
                     <ButtonModal className={s.exit} onClick={handleClose}>Отмена</ButtonModal>
-                    <ButtonModal className={s.save}>
+                    <ButtonModal className={s.save} onClick={() => {
+                        if (type === 2) {
+                            handleCloseAll()
+                        } else if (type === 3) {
+                            handleCloseContract()
+                        }
+                    }}>
                         {type === 1 && 'Сохранить'}
                         {type === 2 && 'Уйти'}
                         {type === 3 && 'Закрыть контракт'}

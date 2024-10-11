@@ -16,7 +16,21 @@ export const tableApi = createApi({
             query: (payload) => ({
                 url: `contracts/create`,
                 method: 'POST',
-                body:payload
+                body: payload
+            }),
+        }),
+        editContract: build.mutation({
+            query: (payload) => ({
+                url: `contracts/edit`,
+                method: 'POST',
+                body: payload
+            }),
+        }),
+        closeContract: build.mutation({
+            query: (payload) => ({
+                url: `contracts/close`,
+                method: 'POST',
+                body: payload
             }),
         }),
     })
@@ -25,4 +39,6 @@ export const tableApi = createApi({
 export const {
     useGetTableDataQuery,
     useCreateContractMutation,
+    useCloseContractMutation,
+    useEditContractMutation,
 } = tableApi
