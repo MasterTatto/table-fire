@@ -44,6 +44,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
     const [editContract] = useEditContractMutation()
 
     const isEdit = btn_type?.id === 2
+    const isContinue = btn_type?.id === 3
     const formik = useFormik({
         initialValues: {
             date_sign_contract: null,
@@ -467,11 +468,12 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                     </div>
 
                                     <div className={s.btns}>
-                                        {btn_type?.id !== 1 && <ButtonModal onClick={() => setOpenInfoModal(2)}
-                                                                            className={s.btn_exit_no_save}>Выйти
-                                            без сохранения</ButtonModal>}
+                                        {(btn_type?.id !== 1 && !isContinue) &&
+                                            <ButtonModal onClick={() => setOpenInfoModal(2)}
+                                                         className={s.btn_exit_no_save}>Выйти
+                                                без сохранения</ButtonModal>}
                                         <ButtonModal type={'submit'} className={s.btn_exit_save}>
-                                            {btn_type?.id === 1 ? 'Добавить' : 'Сохранить изменения'}
+                                            {(btn_type?.id === 1 || isContinue) ? (isContinue ? 'Продлить' : 'Добавить') : 'Сохранить изменения'}
                                         </ButtonModal>
                                     </div>
                                 </div>

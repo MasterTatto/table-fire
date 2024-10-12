@@ -40,6 +40,7 @@ const ModalInfo = ({open, handleClose, type, handleCloseAll, data, refetch_table
                     if (res?.error) {
                         toast.error(res?.message || 'Ошибка закрытия контракта')
                     } else {
+                        toast.success('Контракт закрыт')
                         refetch_table()
                         handleCloseAll()
                     }

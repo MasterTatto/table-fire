@@ -33,12 +33,20 @@ export const tableApi = createApi({
                 body: payload
             }),
         }),
+        createSplit: build.mutation({
+            query: (payload) => ({
+                url: `contracts/split/create`,
+                method: 'POST',
+                body: payload
+            }),
+        }),
     })
 })
 
 export const {
     useGetTableDataQuery,
     useCreateContractMutation,
+    useCreateSplitMutation,
     useCloseContractMutation,
     useEditContractMutation,
 } = tableApi

@@ -16,6 +16,7 @@ import {mock, mock_data} from "./mock";
 import moment from "moment";
 import ModalTable from "./modal";
 import {useGetTableDataQuery} from "./redux/table.service";
+import ModalTableSplit from "./modal_split";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -31,6 +32,7 @@ export const GridExample = () => {
     })
     console.log(data)
     const [modalData, setModalData] = useState(null)
+    const [modalSplit, setModalSplit] = useState(null)
 
     const isRowMaster = useCallback((dataItem) => {
         return dataItem ? dataItem?.mtt_prev_contracts?.length > 0 : false;
@@ -64,7 +66,7 @@ export const GridExample = () => {
             field: "mtt_current_contract.contract_duration_type",
             headerName: 'Срок текущего контракта',
             cellRenderer: (params) => {
-                console.log(params)
+
                 return <span
                     className={classNames('cell_text')}>{params?.value === 'number' ? params?.data?.mtt_current_contract?.end_contract_tourney : (params?.data?.mtt_current_contract?.end_contract_date ? moment(params?.data?.mtt_current_contract?.end_contract_date)?.format('DD.MM.YYYY') : '---')}</span>
             }
@@ -103,7 +105,10 @@ export const GridExample = () => {
             field: "",
             headerName: 'Сплиты и авансы',
             cellRenderer: (params) => {
-                return <span className={classNames('cell_text', 'cell_text_btn')}>Перейти</span>
+                const isHaveContarct = params?.data?.mtt_current_contract
+                return <span
+                    className={classNames('cell_text', 'cell_text_btn')}
+                    onClick={() => isHaveContarct ? setModalSplit(params?.data) : {}}>{isHaveContarct ? 'Перейти' : ''}</span>
             }
         },
     ]);
@@ -171,6 +176,22 @@ export const GridExample = () => {
                             return <span className={classNames('cell_text', 'cell_text_btn')}>Смотреть</span>
                         }
                     },
+                    {
+                        field: "",
+                        headerName: 'Сплиты и авансы',
+                        cellRenderer: (params) => {
+                            const isHaveContarct = params?.data?.splits_preps && Array.isArray(params?.data?.splits_preps) && params?.data?.splits_preps?.length !== 0
+                            console.log(params)
+                            return <span
+                                className={classNames('cell_text', 'cell_text_btn')}
+                                onClick={() => isHaveContarct ? setModalSplit({
+                                    mtt_current_contract: {...params?.data},
+                                    isBlockAdded: true,
+                                    player_id: params?.data?.player_id,
+                                    nickname: params?.data?.nickname,
+                                }) : {}}>{isHaveContarct ? 'Перейти' : ''}</span>
+                        }
+                    },
                 ],
                 defaultColDef: {
                     flex: 1,
@@ -179,7 +200,12 @@ export const GridExample = () => {
 
             },
             getDetailRowData: function (params) {
-                params.successCallback(params.data?.mtt_prev_contracts);
+                console.log(params)
+                params.successCallback(params.data?.mtt_prev_contracts?.map((el) => ({
+                    ...el,
+                    nickname: params?.data?.nickname,
+                    player_id: params?.data?.player_id
+                })));
             },
         };
     }, []);
@@ -194,9 +220,13 @@ export const GridExample = () => {
             {Boolean(modalData) &&
                 <ModalTable refetch_table={refetch} contract_types={data?.contract_types || []} open={modalData}
                             handleClose={() => setModalData(null)}/>}
+            {Boolean(modalSplit) &&
+                <ModalTableSplit refetch_table={refetch} open={modalSplit} setModalSplit={setModalSplit}
+                                 handleClose={() => setModalSplit(null)}/>}
             <AgGridReact
                 rowData={data?.players || []}
                 masterDetail={true}
+                context={{parentData: data}}
                 isRowMaster={isRowMaster}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
