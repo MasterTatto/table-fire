@@ -20,6 +20,19 @@ const style = {
     overflow: 'auto',
     boxShadow: 0,
     padding: '24px 160px',
+
+    '@media screen and (max-width: 780px)': {
+        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'auto',
+        borderRadius: '0px',
+        padding: '12px 16px 16px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        // justifyContent: 'space-between'
+    },
 };
 
 
@@ -50,6 +63,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "date",
                 headerName: 'Дата выдачи',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span
                         className={classNames('cell_text')}>{!params?.value ? '---' : moment(params?.data?.mtt_current_contract?.end_contract_date)?.format('DD.MM.YYYY')}</span>
@@ -58,6 +72,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
             {
                 field: "description",
                 headerName: 'Описание',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span
                         className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
@@ -67,6 +82,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "support_nickname",
                 headerName: 'Кто выдал',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
                 }
@@ -77,6 +93,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "date",
                 headerName: 'Дата выдачи',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span
                         className={classNames('cell_text')}>{!params?.value ? '---' : moment(params?.data?.mtt_current_contract?.end_contract_date)?.format('DD.MM.YYYY')}</span>
@@ -85,6 +102,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
             {
                 field: "description",
                 headerName: 'Описание',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span
                         className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
@@ -94,6 +112,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "support_nickname",
                 headerName: 'Кто выдал',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
                 }
@@ -102,6 +121,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "sum",
                 headerName: 'Сумма',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
                 }
@@ -110,6 +130,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "currency",
                 headerName: 'Валюта',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
                 }
@@ -118,6 +139,7 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                 field: "status",
                 headerName: 'Статус аванса (погашен/не погашен)',
                 cellClass: 'cell_text',
+                minWidth: 150,
                 cellRenderer: (params) => {
                     return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
                 }
@@ -171,8 +193,6 @@ const ModalTableSplit = ({open, handleClose, refetch_table, setModalSplit}) => {
                             <div className={
                                 "ag-theme-quartz"
                             }>
-
-
                                 <AgGridReact
                                     rowData={data_table[typeBtn] || []}
                                     // masterDetail={true}

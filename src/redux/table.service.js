@@ -11,6 +11,18 @@ export const tableApi = createApi({
                 url: `contracts/info`,
                 method: 'GET',
             }),
+            transformResponse(baseQueryReturnValue, meta, arg) {
+
+                return {
+                    ...baseQueryReturnValue, players: baseQueryReturnValue?.players?.map((el) => {
+                        const typeValueButton =
+                            (((!el?.mtt_prev_contracts || el?.mtt_prev_contracts?.length === 0) && !el?.mtt_current_contract) && 1) ||
+                            ((el?.mtt_current_contract) && 2) ||
+                            (((el?.mtt_prev_contracts && el?.mtt_prev_contracts?.length !== 0) && !el?.mtt_current_contract) && 3)
+                        return {...el, type_btn: typeValueButton}
+                    })
+                }
+            }
         }),
         createContract: build.mutation({
             query: (payload) => ({

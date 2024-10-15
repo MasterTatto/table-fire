@@ -25,6 +25,31 @@ const style = {
     overflow: 'auto',
     boxShadow: 0,
     padding: '24px 160px',
+
+    '@media screen and (max-width: 1600px)': {
+        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'auto',
+        borderRadius: '0px',
+        padding: '12px 16px 16px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        // justifyContent: 'space-between'
+    },
+    '@media screen and (max-width: 780px)': {
+        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'auto',
+        borderRadius: '0px',
+        padding: '12px 16px 16px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        // justifyContent: 'space-between'
+    },
 };
 
 const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
@@ -36,8 +61,6 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
     // 1 = added
     // 2 = edit
     // 3 = contiune
-    console.log(open)
-    console.log(contract_types)
     const [openInfoModal, setOpenInfoModal] = useState(null)
 
     const [createContract] = useCreateContractMutation()
@@ -215,7 +238,6 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
         }
     }, [isEdit])
 
-    console.log(formik?.values)
     return (
         <>
 

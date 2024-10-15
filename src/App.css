@@ -28,9 +28,38 @@
 }
 
 .inputs_box {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 28px;
-    max-width: 828px;
     width: 100%;
+}
+
+@media screen and (max-width: 1200px) {
+    .inputs_box {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 780px) {
+    .inputs_box {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 100%;
+        width: 100%;
+    }
+
+
+    .title {
+        font-family: Nunito Sans, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 43.65px;
+        text-align: center;
+        color: #FFFFFF;
+    }
 }

@@ -40,12 +40,19 @@ const customStyles = {
             backgroundColor: 'rgba(58,73,98,0.85)', // Цвет при наведении на опцию
         },
     }),
+
+    menu: (provided) => ({
+        ...provided,
+        // backgroundColor: 'red',
+        zIndex: 10, // Чтобы избежать наложения других элементов
+    }),
 };
-const SelectModal = ({error, value, onChange, title = '', options = [], background = false}) => {
+const SelectModal = ({error, placeholder = '', value, onChange, title = '', options = [], background = false}) => {
     return (
         <div className={s.input}>
             {title && <p className={s.title}>{title}</p>}
-            <Select placeholder={''} styles={customStyles} background={background} value={value} onChange={onChange}
+            <Select placeholder={placeholder} styles={customStyles} background={background} value={value}
+                    onChange={onChange}
                     options={options}/>
             {error && <span className={s.error}>{error}</span>}
         </div>

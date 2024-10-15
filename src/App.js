@@ -4,9 +4,10 @@ import {GridExample} from "./tets";
 import './App.css'
 import Input from "./input";
 import {ToastContainer} from "react-toastify";
+import {useMediaQuery} from "@mui/material";
 
 const App = () => {
-
+    const query_780 = useMediaQuery('(max-width:780px)');
     return (
         <div className={'app'}>
             <ToastContainer
@@ -21,11 +22,7 @@ const App = () => {
                 pauseOnHover
                 theme="colored"
             />
-            <div className={'inputs_box'}>
-                <Input placeholder={'ПОИСК по никнеймам?'}/>
-                <Input placeholder={'Фильтр по датам, типам контрактов?'}/>
-            </div>
-            <h2 className={'title'}>Страница контрактов</h2>
+
             <GridExample/>
         </div>
     );

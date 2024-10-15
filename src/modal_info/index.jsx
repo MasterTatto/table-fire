@@ -20,6 +20,19 @@ const style = {
     boxShadow: 0,
     zIndex: 99999999999999,
     padding: '46px 72px',
+
+    '@media screen and (max-width: 780px)': {
+        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'auto',
+        borderRadius: '0px',
+        padding: '12px 16px 16px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        // justifyContent: 'space-between'
+    },
 };
 
 const ModalInfo = ({open, handleClose, type, handleCloseAll, data, refetch_table}) => {

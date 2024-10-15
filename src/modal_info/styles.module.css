@@ -79,3 +79,23 @@
     text-align: left;
     color: #B5B6C4
 }
+
+@media screen and (max-width: 780px) {
+    .title {
+        font-size: 28px;
+        line-height: 120%;
+    }
+
+    .desription {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 120%;
+    }
+
+    .btns {
+        grid-template-columns:1fr;
+        gap: 18px;
+        margin-top: auto;
+    }
+}
+

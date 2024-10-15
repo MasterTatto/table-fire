@@ -1,5 +1,5 @@
 import React, {
-    useCallback,
+    useCallback, useEffect,
     useMemo,
     useState,
 } from "react";
@@ -17,6 +17,11 @@ import moment from "moment";
 import ModalTable from "./modal";
 import {useGetTableDataQuery} from "./redux/table.service";
 import ModalTableSplit from "./modal_split";
+import Input from "./input";
+import InputModal from "./ui-kit/inputModal";
+import SelectModal from "./ui-kit/selectModal";
+import {useFormik} from "formik";
+import {debounce} from "lodash";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -37,6 +42,7 @@ export const GridExample = () => {
     const isRowMaster = useCallback((dataItem) => {
         return dataItem ? dataItem?.mtt_prev_contracts?.length > 0 : false;
     }, []);
+    const [filteredData, setFilteredData] = useState([]);
 
 
     const [columnDefs, setColumnDefs] = useState([
@@ -45,10 +51,12 @@ export const GridExample = () => {
             cellRenderer: "agGroupCellRenderer",
             headerName: 'Никнейм',
             cellClass: 'cell_text',
+            minWidth: 150,
         },
         {
             field: "date_join_mtt",
             headerName: 'Дата прихода в команду',
+            minWidth: 170,
             cellRenderer: (params) => {
                 return <span
                     className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
@@ -58,6 +66,7 @@ export const GridExample = () => {
             field: "mtt_current_contract.contract_duration_name",
             headerName: 'Тип контракта',
             cellClass: 'cell_text',
+            minWidth: 150,
             cellRenderer: (params) => {
                 return <span className={classNames('cell_text')}>{params?.value ? params?.value : '---'}</span>
             }
@@ -65,6 +74,7 @@ export const GridExample = () => {
         {
             field: "mtt_current_contract.contract_duration_type",
             headerName: 'Срок текущего контракта',
+            minWidth: 150,
             cellRenderer: (params) => {
 
                 return <span
@@ -74,6 +84,7 @@ export const GridExample = () => {
         {
             field: "type_btn",
             headerName: 'Контракт',
+            minWidth: 150,
             cellRenderer: (params) => {
                 const typeBtn = {
                     1: {
@@ -89,21 +100,15 @@ export const GridExample = () => {
                         id: 3 // contiune
                     },
                 }
-                // react-toastify@9.1.3
-                const typeValueButton =
-                    (((!params?.data?.mtt_prev_contracts || params?.data?.mtt_prev_contracts?.length === 0) && !params?.data?.mtt_current_contract) && 1) ||
-                    ((params?.data?.mtt_current_contract) && 2) ||
-                    (((params?.data?.mtt_prev_contracts && params?.data?.mtt_prev_contracts?.length !== 0) && !params?.data?.mtt_current_contract) && 3)
-                // Данные с бека всей строки
                 const data = params?.data
-
-                return <span onClick={() => setModalData({...data, btn_type: typeBtn[typeValueButton]})}
-                             className={classNames('cell_text', 'cell_text_btn')}>{typeBtn[typeValueButton]?.title || '---'}</span>
+                return <span onClick={() => setModalData({...data, btn_type: typeBtn[params?.value]})}
+                             className={classNames('cell_text', 'cell_text_btn')}>{typeBtn[params?.value]?.title || '---'}</span>
             }
         },
         {
             field: "",
             headerName: 'Сплиты и авансы',
+            minWidth: 150,
             cellRenderer: (params) => {
                 const isHaveContarct = params?.data?.mtt_current_contract
                 return <span
@@ -179,6 +184,7 @@ export const GridExample = () => {
                     {
                         field: "",
                         headerName: 'Сплиты и авансы',
+                        minWidth: 150,
                         cellRenderer: (params) => {
                             const isHaveContarct = params?.data?.splits_preps && Array.isArray(params?.data?.splits_preps) && params?.data?.splits_preps?.length !== 0
                             console.log(params)
@@ -210,30 +216,127 @@ export const GridExample = () => {
         };
     }, []);
 
-    return (
-        <div
-            style={{height: '600px', width: '100% '}}
-            className={
-                "ag-theme-quartz"
+    const filterFormik = useFormik({
+        initialValues: {
+            nickname: null,
+            date: null,
+            type: null,
+            status: null,
+        }
+    })
+    console.log(filterFormik?.values?.date)
+
+    const parseDate = (dateString) => {
+        if (!dateString) return null; // Проверка на null или пустую строку
+        const [day, month, year] = dateString.split('.');
+        return new Date(year, month - 1, day);
+    };
+
+    const filterData = useMemo(() => {
+        const debouncedFilter = debounce(() => {
+            if (data?.players) {
+                const filtered = data.players.filter((player) => {
+                    const isNicknameMatch = filterFormik.values.nickname
+                        ? player.nickname.toLowerCase().includes(filterFormik.values.nickname.toLowerCase())
+                        : true;
+
+                    const isDateMatch = filterFormik.values.date
+                        ? parseDate(player.date_join_mtt)?.toLocaleDateString() ===
+                        new Date(filterFormik.values.date).toLocaleDateString()
+                        : true;
+
+                    const isTypeMatch = filterFormik.values.type
+                        ? (filterFormik.values?.type?.value === 'all' ? true : player?.mtt_current_contract?.contract_duration_name === filterFormik.values?.type?.label)
+                        : true;
+
+                    const isStatusMatch = filterFormik.values.status
+                        ? (filterFormik.values.status?.value === 'all' ? true : +player?.type_btn === +filterFormik.values?.status?.value)
+                        : true;
+
+                    return isNicknameMatch && isDateMatch && isTypeMatch && isStatusMatch;
+                });
+                setFilteredData(filtered);
             }
-        >
-            {Boolean(modalData) &&
-                <ModalTable refetch_table={refetch} contract_types={data?.contract_types || []} open={modalData}
-                            handleClose={() => setModalData(null)}/>}
-            {Boolean(modalSplit) &&
-                <ModalTableSplit refetch_table={refetch} open={modalSplit} setModalSplit={setModalSplit}
-                                 handleClose={() => setModalSplit(null)}/>}
-            <AgGridReact
-                rowData={data?.players || []}
-                masterDetail={true}
-                context={{parentData: data}}
-                isRowMaster={isRowMaster}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                suppressDragLeaveHidesColumns={true}
-                domLayout='autoHeight'
-                detailCellRendererParams={detailCellRendererParams}
-            />
-        </div>
+        }, 300); // Задержка 300 мс
+
+        return debouncedFilter;
+    }, [data, filterFormik.values]);
+
+// Вызов функции фильтрации при изменении значений фильтра
+    useEffect(() => {
+        filterData();
+    }, [filterData]);
+    console.log(filteredData)
+    return (
+        <>
+            <div className={'inputs_box'}>
+                <InputModal
+                    value={filterFormik?.values?.nickname}
+                    onChange={filterFormik?.handleChange}
+                    name={'nickname'}
+                    title={'Поиск по никнеймам'}/>
+
+                <InputModal
+                    value={filterFormik?.values?.date}
+                    onChange={filterFormik?.handleChange}
+                    name={'date'}
+                    type={'date'}
+                    title={'Дата прихода в команду'}/>
+                <SelectModal title={'Тип контракта'}
+                             onChange={(e) => {
+                                 filterFormik.setFieldValue('type', e)
+                             }}
+                             value={filterFormik?.values?.type}
+                             options={data?.contract_types ? [{
+                                 value: 'all',
+                                 label: 'Все'
+                             }, ...data?.contract_types?.map((el) => ({
+                                 ...el,
+                                 value: el?._id,
+                                 label: el?.name
+                             }))] : []}/>
+                <SelectModal title={'Статус контракта'}
+                             value={filterFormik?.values?.status}
+                             onChange={(e) => {
+                                 filterFormik.setFieldValue('status', e)
+                             }}
+                             options={
+                                 [
+                                     {value: 'all', label: 'Все'},
+                                     {value: '1', label: 'Добавить'},
+                                     {value: '2', label: 'Редактировать'},
+                                     {value: '3', label: 'Продлить'},
+                                 ]
+                             }/>
+
+            </div>
+            <h2 className={'title'}>Страница контрактов</h2>
+
+            <div
+                style={{height: '600px', width: '100% '}}
+                className={
+                    "ag-theme-quartz"
+                }
+            >
+                {Boolean(modalData) &&
+                    <ModalTable refetch_table={refetch} contract_types={data?.contract_types || []} open={modalData}
+                                handleClose={() => setModalData(null)}/>}
+                {Boolean(modalSplit) &&
+                    <ModalTableSplit refetch_table={refetch} open={modalSplit} setModalSplit={setModalSplit}
+                                     handleClose={() => setModalSplit(null)}/>}
+                <AgGridReact
+                    rowData={filteredData || []}
+                    masterDetail={true}
+                    context={{parentData: data}}
+                    isRowMaster={isRowMaster}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    suppressDragLeaveHidesColumns={true}
+                    domLayout='autoHeight'
+                    detailCellRendererParams={detailCellRendererParams}
+                />
+            </div>
+
+        </>
     );
 };
