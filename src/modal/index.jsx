@@ -61,12 +61,14 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
     // 1 = added
     // 2 = edit
     // 3 = contiune
+    // 4 = watch
     const [openInfoModal, setOpenInfoModal] = useState(null)
 
     const [createContract] = useCreateContractMutation()
     const [editContract] = useEditContractMutation()
 
-    const isEdit = btn_type?.id === 2
+    const isEdit = btn_type?.id === 2 || btn_type?.id === 4
+    const isWatch = btn_type?.id === 4
     const isContinue = btn_type?.id === 3
     const formik = useFormik({
         initialValues: {
@@ -269,9 +271,10 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                             Назад к контрактам
                         </div>
                         <div className={s.title_box}>
-                            <h1 className={s.title}>{`${(btn_type?.id === 1 && 'Меню добавления контракта') || (btn_type?.id === 2 && 'Меню редактирования контракта') || (btn_type?.id === 3 && 'Меню продления контракта')}. Игрок - ${open?.nickname || '---'}`} </h1>
-                            {isEdit && <ButtonModal className={s.btn_close} onClick={() => setOpenInfoModal(3)}>Закрыть
-                                контракт</ButtonModal>}
+                            <h1 className={s.title}>{`${(btn_type?.id === 1 && 'Меню добавления контракта') || (btn_type?.id === 2 && 'Меню редактирования контракта') || (btn_type?.id === 3 && 'Меню продления контракта') || (btn_type?.id === 4 && 'Просмотр контракта')}. Игрок - ${open?.nickname || '---'}`} </h1>
+                            {(isEdit && btn_type?.id !== 4) &&
+                                <ButtonModal className={s.btn_close} onClick={() => setOpenInfoModal(3)}>Закрыть
+                                    контракт</ButtonModal>}
                         </div>
 
                         <form onSubmit={formik.handleSubmit} className={s.content}>
@@ -279,7 +282,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                 <h4 className={s.content_item_title}>Основные условия</h4>
                                 <div className={s.content_item_box}>
 
-                                    <InputModal value={formik?.values?.date_sign_contract}
+                                    <InputModal disabled={isWatch} value={formik?.values?.date_sign_contract}
                                                 onBlur={formik.handleBlur}
                                                 onChange={(e) => {
                                                     console.log(e)
@@ -290,6 +293,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                                 title={'Дата подписания контракта'}/>
 
                                     <SelectModal title={'Тип контракта'}
+                                                 disabled={isWatch}
                                                  onChange={(e) => {
                                                      formik.setFieldValue('contract_type', e)
                                                      formik.setFieldTouched('contract_type', false)
@@ -306,6 +310,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                                  }))}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.duration_contract}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -315,6 +320,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         title={'Длительность контракта'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.min_distance}
                                         onBlur={formik.handleBlur}
                                         onChange={(e) => {
@@ -326,6 +332,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         type={'number'} min={0} max={100} title={'Мин. мес. дистанция'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.fix_share}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -335,6 +342,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         title={'Фикс откат в пользу игрока, %'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.player_rb}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -342,11 +350,13 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         name={'player_rb'}
                                         type={'number'} min={0} max={100} title={'РБ игроку, %'}/>
 
-                                    <SwitchModal value={formik?.values?.has_min_distance_penalty} onChange={(e) => {
-                                        formik.setFieldValue('has_min_distance_penalty', e?.target?.checked)
-                                    }} title={'Продлить если не сыграл норму'}/>
+                                    <SwitchModal disabled={isWatch} value={formik?.values?.has_min_distance_penalty}
+                                                 onChange={(e) => {
+                                                     formik.setFieldValue('has_min_distance_penalty', e?.target?.checked)
+                                                 }} title={'Продлить если не сыграл норму'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.test_distance}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -355,6 +365,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         title={'Тестовая дистанция'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.date_start_contract}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -369,6 +380,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                 <div className={s.content_item_box}>
 
                                     <SelectModal title={'Условия получения индивы'}
+                                                 disabled={isWatch}
                                                  onChange={(e) => {
                                                      formik.setFieldValue('training_quota_type', e)
                                                      formik.setFieldTouched('training_quota_type', false)
@@ -385,6 +397,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                                      ]
                                                  }/>
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.training_quota}
                                         onBlur={formik.handleBlur}
                                         onChange={(e) => {
@@ -404,6 +417,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         type={'number'} min={1}
                                         title={'Количество дней для начисления квоты'}/>
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.day_remove_training_quota}
                                         onBlur={formik.handleBlur}
                                         onChange={(e) => {
@@ -423,6 +437,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                     <div className={s.text_area}>
                                         <p className={s.text_area_title}>Условия получения доп отката</p>
                                         <textarea
+                                            disabled={isWatch}
                                             style={{height: '100px'}}
                                             onChange={formik?.handleChange}
                                             value={formik?.values?.additional_share_terms}
@@ -435,12 +450,14 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                     </div>
 
                                     <SwitchModal
+                                        disabled={isWatch}
                                         value={formik?.values?.has_splits} onChange={(e) => {
                                         formik.setFieldValue('has_splits', e?.target?.checked)
                                     }}
                                         title={'Наличие сплитов'}/>
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.split_terms}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
@@ -449,6 +466,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         title={'Условия сплита'}/>
 
                                     <SwitchModal
+                                        disabled={isWatch}
                                         value={formik?.values?.has_splits_penalty} onChange={(e) => {
                                         formik.setFieldValue('has_splits_penalty', e?.target?.checked)
                                     }}
@@ -456,6 +474,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
 
 
                                     <InputModal
+                                        disabled={isWatch}
                                         value={formik?.values?.day_set_close}
                                         onBlur={formik.handleBlur}
                                         onChange={(e) => {
@@ -479,6 +498,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                     <div className={s.text_area}>
                                         <p className={s.text_area_title}>Заметки</p>
                                         <textarea
+                                            disabled={isWatch}
                                             onChange={formik?.handleChange}
                                             value={formik?.values?.notes}
                                             onBlur={formik.handleBlur}
@@ -489,7 +509,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                             <span className={s.error}>{formik?.errors?.notes}</span>}
                                     </div>
 
-                                    <div className={s.btns}>
+                                    {btn_type?.id !== 4 && <div className={s.btns}>
                                         {(btn_type?.id !== 1 && !isContinue) &&
                                             <ButtonModal onClick={() => setOpenInfoModal(2)}
                                                          className={s.btn_exit_no_save}>Выйти
@@ -497,7 +517,7 @@ const ModalTable = ({open, handleClose, contract_types, refetch_table}) => {
                                         <ButtonModal type={'submit'} className={s.btn_exit_save}>
                                             {(btn_type?.id === 1 || isContinue) ? (isContinue ? 'Продлить' : 'Добавить') : 'Сохранить изменения'}
                                         </ButtonModal>
-                                    </div>
+                                    </div>}
                                 </div>
                             </div>
                         </form>

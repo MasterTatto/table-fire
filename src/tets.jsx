@@ -178,7 +178,18 @@ export const GridExample = () => {
                         headerName: 'Просмотр',
 
                         cellRenderer: (params) => {
-                            return <span className={classNames('cell_text', 'cell_text_btn')}>Смотреть</span>
+                            console.log(params)
+                            return <span className={classNames('cell_text', 'cell_text_btn')}
+                                         onClick={() => setModalData({
+                                             mtt_current_contract: {...params?.data},
+                                             isBlockAdded: true,
+                                             player_id: params?.data?.player_id,
+                                             nickname: params?.data?.nickname,
+                                             btn_type: {
+                                                 title: 'Просмотр',
+                                                 id: 4 // contiune
+                                             }
+                                         })}>Смотреть</span>
                         }
                     },
                     {

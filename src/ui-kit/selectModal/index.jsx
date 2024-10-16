@@ -47,11 +47,11 @@ const customStyles = {
         zIndex: 10, // Чтобы избежать наложения других элементов
     }),
 };
-const SelectModal = ({error, placeholder = '', value, onChange, title = '', options = [], background = false}) => {
+const SelectModal = ({error, placeholder = '', value, onChange, title = '', options = [], background = false,disabled = false}) => {
     return (
         <div className={s.input}>
             {title && <p className={s.title}>{title}</p>}
-            <Select placeholder={placeholder} styles={customStyles} background={background} value={value}
+            <Select isDisabled={disabled} placeholder={placeholder} styles={customStyles} background={background} value={value}
                     onChange={onChange}
                     options={options}/>
             {error && <span className={s.error}>{error}</span>}
