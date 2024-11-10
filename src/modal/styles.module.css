@@ -16,6 +16,103 @@
     border-radius: 16px;
 }
 
+/* Стиль для контейнера загрузки */
+.file_upload_box {
+    width: 100%;
+    height: 150px;
+    border: 1px dashed #CFCFCF33;
+
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* background-color: #f8f8f8; */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.file_dragging {
+    /* background-color: #e0f7fa; */
+}
+
+.file_details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.file_name {
+    font-family: Nunito Sans, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 27.28px;
+    text-align: left;
+    color: #FFFFFF;
+}
+
+.remove_file_button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: red;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.file_input {
+    /* display: none; */
+    opacity: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+.list_files{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.list_box{
+    padding: 6px 12px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #CFCFCF33;
+    border-radius: 24px;
+    font-family: Nunito Sans, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    color: #FFFFFF;
+}
+
+.list_box svg {
+    fill: #4678EA;
+    font-size: 18px;
+}
+
+.drop_message {
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+}
+
+/* Прочие стили для кнопок */
+.btns {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
 .title_box {
     width: 100%;
     display: flex;
